@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Vita-Attendance
+Vita-Attendance is an intuitive and efficient attendance management system built using cutting-edge web technologies. This project leverages the new app route feature in Next.js 14, integrating NextAuth and TypeORM as the core technology stack to streamline and optimize user authentication and data management.
+
+## Technology Stack
+- **Next.js 14**: A framework for building modern React applications. This project specifically utilizes the app route feature in Next.js 14 for more concise and efficient page routing and data fetching.
+- **NextAuth**: A simple yet powerful authentication solution. Easily integrates with Next.js applications for user authentication and session management.
+- **TypeORM**: An ORM designed for TypeScript, supporting a wide range of databases and making data modeling and management easier.
 
 ## Getting Started
+### Prerequisites
+- Node.js version 12 or later
+Database setup (the project defaults to MySQL, but can be changed to any database supported by TypeORM)
 
-First, run the development server:
+### Installation
+1. Clone the repository.
+```bash
+git clone https://your-repository-url/vita-attendance.git
+```
+2. Move to the project directory.
+```bash
+cd vita-attendance
+```
+3. Install the required packages.
+```bash
+npm install
+```
+4. Set up your environment variables. (Refer to .env.local file)
+
+### Running
+To run the application in development mode, use the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+You can now access the application at http://localhost:3000 in your browser.
