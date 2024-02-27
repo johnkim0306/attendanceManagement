@@ -1,26 +1,22 @@
-'use client'
-import { useSession } from 'next-auth/react';
+'use client';
 
-export default function Home() {
-  const {data:session, status} = useSession();
+export default function Main() {
+	const handleCheckIn = async () => {
+		//Call checkin api
+	};
 
-  if(status != 'loading' && !session?.user){
-    window.location.href = '/login';
-  }
+	const handleCheckOut = async () => {
+		//Call checkout api
+	};
 
-  const handleCheckIn = async () => {
-    //Call checkin api
-  };
-
-  const handleCheckOut = async () => {
-    //Call checkout api
-  };
-
-
-  return (
-    <div>
-      <button onClick={handleCheckIn}>Check In</button>
-      <button onClick={handleCheckOut}>Check Out</button>
-    </div>
-  );
+	return (
+		<div>
+			<button onClick={handleCheckIn} className='px-4 py-2 m-2 bg-slate-400 rounded'>
+				Check In
+			</button>
+			<button onClick={handleCheckOut} className='px-4 py-2 m-2 bg-slate-400 rounded'>
+				Check Out
+			</button>
+		</div>
+	);
 }
