@@ -1,12 +1,24 @@
 'use client';
 
+import { checkIn } from "./action";
+import { signOut, useSession } from 'next-auth/react';
+
 export default function Main() {
+
+	const { data: session } = useSession();
+
 	const handleCheckIn = async () => {
-		//Call checkin api
+        console.log("Check In");
+        const result = await checkIn(session);
+        if (result && result.success) {
+            console.log("Worekd!!!")
+        } else {
+            console.error('Error:', result ? result.message: 'Result is undefined');
+        }
 	};
 
 	const handleCheckOut = async () => {
-		//Call checkout api
+		console.log("Check Out");
 	};
 
 	return (
