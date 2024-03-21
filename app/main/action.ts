@@ -28,3 +28,25 @@ export async function checkIn(session: Session | null) {
         return { success: false, message: error };
 	}
 }
+
+export async function checkOut(session: Session | null) {
+	console.log("inside action.ts and checkout function!!")
+
+	if (!session) {
+		console.error('User is not authenticated');
+		return;
+	}
+	console.log("inside action.ts")
+	console.log(session)
+	const userId = session.user?.id;
+	console.log("UserId: ", userId);
+
+	const AttendanceRecordServices = Provider.getService(AttendanceRecordService);
+	console.log("About toe pass in");
+	try {
+		await AttendanceRecordServices.checkOut(userId as number)
+	} catch {
+
+	}
+}
+

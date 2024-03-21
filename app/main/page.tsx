@@ -1,6 +1,6 @@
 'use client';
 
-import { checkIn } from "./action";
+import { checkIn, checkOut } from "./action";
 import { signOut, useSession } from 'next-auth/react';
 
 export default function Main() {
@@ -19,6 +19,7 @@ export default function Main() {
 
 	const handleCheckOut = async () => {
 		console.log("Check Out");
+		const result = await checkOut(session);
 	};
 
 	return (
