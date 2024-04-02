@@ -4,12 +4,19 @@ import { AttendanceRecordService } from '@/server/service/attendancerecord.servi
 import { Session } from 'next-auth';
 import { redirect } from 'next/navigation';
 
-export async function checkIn(session: Session | null) {
+
+interface CheckInOutResult {
+    success: boolean;
+    timestamp?: string;
+    message?: string;
+}
+
+export async function checkIn(session: Session | null): Promise<CheckInOutResult> {
 	console.log("inside action.ts!!")
 
 	if (!session) {
 		console.error('User is not authenticated');
-		return;
+        return { success: false, message: 'User is not authenticated' };
 	}
 	console.log("inside action.ts")
 	console.log(session)
@@ -20,21 +27,27 @@ export async function checkIn(session: Session | null) {
 	console.log("userId:? ", userId);
 
 	try {
-		await AttendanceRecordServices.create(userId as number );
-		//console.log(JSON.stringify(result));
-		// redirect('/main');
-        return { success: true };
+		const createdRecord = await AttendanceRecordServices.create(userId as number );
+		console.log('Attendance record created:', createdRecord);
+
+		let formattedTimestamp = createdRecord.checkIn.toISOString();
+
+
+        // Fetch the newly created record
+        return { success: true, timestamp: formattedTimestamp };
+
+        // return { success: true };
 	} catch (error) {
         return { success: false, message: error };
 	}
 }
 
-export async function checkOut(session: Session | null) {
+export async function checkOut(session: Session | null): Promise<CheckInOutResult> {
 	console.log("inside action.ts and checkout function!!")
 
 	if (!session) {
 		console.error('User is not authenticated');
-		return;
+        return { success: false, message: 'User is not authenticated' };
 	}
 	console.log("inside action.ts")
 	console.log(session)
@@ -42,11 +55,16 @@ export async function checkOut(session: Session | null) {
 	console.log("UserId: ", userId);
 
 	const AttendanceRecordServices = Provider.getService(AttendanceRecordService);
-	console.log("About toe pass in");
+	console.log("About toe pass in", AttendanceRecordServices);
 	try {
-		await AttendanceRecordServices.checkOut(userId as number)
-	} catch {
+		const checkoutTime = await AttendanceRecordServices.checkOut(userId as number)
+		console.log('Checkout Time is: ', checkoutTime);
 
+		let formattedTimestamp = checkoutTime.checkOut.toISOString();
+
+		return { success: true, timestamp: formattedTimestamp };
+
+	} catch {
+		return { success: false, message: error };
 	}
 }
-
