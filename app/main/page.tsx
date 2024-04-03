@@ -1,16 +1,38 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { checkIn, checkOut } from "./action";
 import { signOut, useSession } from 'next-auth/react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import ProfileTable from "@/components/profileTable";
+import CheckInOutTable from "@/components/CheckInOutTable";
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 export default function Main() {
-
 	const { data: session } = useSession();
 	const [isCheckedIn, setIsCheckedIn] = useState(false);
 	const [isCheckedOut, setIsCheckedOut] = useState(false);
 	const [checkInTimestamp, setCheckInTimestamp] = useState("");
 	const [checkOutTimestamp, setCheckOutTimestamp] = useState("");
+	const [value, onChange] = useState<Value>(new Date());
+
+    useEffect(() => {
+        // Your function to call when the calendar value changes
+        console.log("Calendar value changed:", value);
+		findMatchingDates(value);
+    }, [value]);
+
+	const findMatchingDates = async (value: Value) => {
+		try {
+			// Example asynchronous operation (replace with your actual implementation)
+			console.log("I am here in findMathcing Dates: " , value)
+		} catch (error) {
+			console.error("Error occurred during async operation:", error);
+		}
+	}
 
 	const handleCheckIn = async () => {
         console.log("Check In");
@@ -44,7 +66,9 @@ export default function Main() {
 	};
 
 	return (
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-col items-center
+		.">
+			<Calendar selectRange={true} onChange={onChange} value={value} />
             <div className="border border-gray rounded-lg p-4">
                 <button onClick={handleCheckIn} className="px-4 py-2 m-2 bg-slate-400 rounded">
                     Check In
@@ -59,6 +83,9 @@ export default function Main() {
                     <p>You have checked Out! Timestamp: {checkOutTimestamp}</p>
                 )}
             </div>
+			<ProfileTable />
+			<CheckInOutTable userRange={value} />
         </div>
 	);
 }
+
