@@ -68,4 +68,10 @@ export class AttendanceRecordService {
     recentAttendanceRecord.checkOut = new Date();
     return this.AttendanceRecordRepository.save(recentAttendanceRecord);
   }
+
+  async fetchRecordsByDateRange(userId: number,fromDate: Date, toDate: Date) {
+    console.log("Inside attendanceRecord.service ", fromDate)
+    console.log("Inside attendanceRecord.service ", toDate)
+    return null;
+  }
 }

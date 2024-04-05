@@ -11,6 +11,15 @@ interface CheckInOutResult {
     message?: string;
 }
 
+interface fetchDateResult {
+    success: boolean;
+    timestamp?: string;
+    message?: string;
+}
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 export async function checkIn(session: Session | null): Promise<CheckInOutResult> {
 	console.log("inside action.ts!!")
 
@@ -67,4 +76,44 @@ export async function checkOut(session: Session | null): Promise<CheckInOutResul
 	} catch {
 		return { success: false, message: error };
 	}
+}
+
+export async function fetchUserRecordsByDate(session: Session | null, value: Value): Promise<fetchDateResult> {
+    if (!session) {
+        console.error('User is not authenticated');
+        return { success: false, message: 'User is not authenticated' };
+    }
+
+    const AttendanceRecordServices = Provider.getService(AttendanceRecordService);
+    const userId = session.user?.id;
+
+	console.log("userId: ", userId)
+	console.log("Value: ", value)
+
+    try {
+		
+        let fromDate: Date | null;
+        let toDate: Date | null;
+		
+		if (Array.isArray(value)) {
+            // Parse the date range from the value array
+            fromDate = new Date(value[0] as unknown as string); 
+            toDate = new Date(value[1] as unknown as string); 
+        } else {
+            fromDate = null;
+            toDate = null;
+        }
+
+		console.log(fromDate);
+		console.log(toDate);
+
+        // Call the method in AttendanceRecordService to fetch records by date range
+        const records = await AttendanceRecordServices.fetchRecordsByDateRange(userId as number, fromDate, toDate);
+
+		return { success: true};
+
+    } catch (error) {
+        console.error('Error fetching records:', error);
+        return [];
+    }
 }

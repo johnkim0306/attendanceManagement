@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { checkIn, checkOut } from "./action";
+import { checkIn, checkOut, fetchUserRecordsByDate } from "./action";
 import { signOut, useSession } from 'next-auth/react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -29,6 +29,10 @@ export default function Main() {
 		try {
 			// Example asynchronous operation (replace with your actual implementation)
 			console.log("I am here in findMathcing Dates: " , value)
+			const result = await fetchUserRecordsByDate(session, value);
+			if (result) {
+				console.log("Success with FethcingRecordByDate")
+			}
 		} catch (error) {
 			console.error("Error occurred during async operation:", error);
 		}
