@@ -41,7 +41,6 @@ export async function checkIn(session: Session | null): Promise<CheckInOutResult
 
 		let formattedTimestamp = createdRecord.checkIn.toISOString();
 
-
         // Fetch the newly created record
         return { success: true, timestamp: formattedTimestamp };
 

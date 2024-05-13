@@ -1,4 +1,4 @@
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 import { AttendanceRecord } from '../db/entities/AttendanceRecord';
 import { User } from '../db/entities/User';
 import { Inject, InjectRepository, Service } from '../provider';
@@ -68,6 +68,22 @@ export class AttendanceRecordService {
     recentAttendanceRecord.checkOut = new Date();
     return this.AttendanceRecordRepository.save(recentAttendanceRecord);
   }
+
+  async hasCheckedInWithinThirtyMinutes(userId: number): Promise<boolean> {
+    const thirtyMinutesAgo = new Date();
+    thirtyMinutesAgo.setMinutes(thirtyMinutesAgo.getMinutes() - 30);
+
+    const recentAttendanceRecord = await this.AttendanceRecordRepository.findOne({
+      where: { 
+        user: { id: userId },
+        checkIn: MoreThan(thirtyMinutesAgo),
+        checkOut: IsNull(),
+      }
+    });
+
+    return !!recentAttendanceRecord;
+}
+
 
   async fetchRecordsByDateRange(userId: number,fromDate: Date, toDate: Date) {
     console.log("Inside attendanceRecord.service ", fromDate)
