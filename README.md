@@ -6,6 +6,9 @@ Vita-Attendance is an intuitive and efficient attendance management system built
 - **Next.js 14**: A framework for building modern React applications. This project specifically utilizes the app route feature in Next.js 14 for more concise and efficient page routing and data fetching.
 - **NextAuth**: A simple yet powerful authentication solution. Easily integrates with Next.js applications for user authentication and session management.
 - **TypeORM**: An ORM designed for TypeScript, supporting a wide range of databases and making data modeling and management easier.
+- **Tailwind CSS**: A utility-first CSS framework that enables rapid UI development by providing pre-defined classes directly in your markup.
+- **Jest**: A robust JavaScript testing framework designed to ensure code reliability through unit and integration tests.
+- **MySQL**: As the database for storing data.
 
 ## Getting Started
 ### Prerequisites
