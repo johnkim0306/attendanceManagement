@@ -19,4 +19,8 @@ export class UserService {
     newUser.lastname = lastname;
     return this.userRepository.save(newUser);
   }
+
+  async getTotalEmployees(): Promise<number> {
+    return this.userRepository.count();
+  }
 }
