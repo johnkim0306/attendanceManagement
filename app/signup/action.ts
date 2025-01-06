@@ -11,8 +11,16 @@ export async function signUp(formData: FormData) {
 	const firstname = formData.get('firstName');
 	const lastname = formData.get('lastName');
 	try {
-		await userService.signUpUser(email as string, password as string, firstname as string, lastname as string);
-		//console.log(JSON.stringify(result));
+		const newUser = await userService.signUpUser(email as string, password as string, firstname as string, lastname as string);
+		// Convert the newUser to a plain object before redirecting
+		// const plainUser = {
+		// 	id: newUser.id,
+		// 	email: newUser.email,
+		// 	firstname: newUser.firstname,
+		// 	lastname: newUser.lastname,
+		// 	role: newUser.role,
+		// };
+		console.log(JSON.stringify(newUser));
 		redirect('/');
 	} catch (error) {
 		return { message: error };

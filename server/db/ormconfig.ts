@@ -10,7 +10,7 @@ const ormconfig: DataSourceOptions =
   "username": process.env.DATABASE_USER,
   "password": process.env.DATABASE_PASSWORD,
   "database": process.env.DATABASE_NAME,
-  "synchronize": process.env.NODE_ENV !== 'production',
+  "synchronize": true,
   "logging": true,
   "entities": [
     User, AttendanceRecord

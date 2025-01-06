@@ -7,6 +7,9 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import ProfileTable from "@/components/profileTable";
 import TotalEmployees from '@/components/TotalEmployees';
+import OnTimeToday from '@/components/OnTimeToday';
+import LateToday from '@/components/LateToday';
+import OnTimePercentage from '@/components/OnTimePercentage';
 import CheckInOutTable from "@/components/CheckInOutTable";
 
 type ValuePiece = Date | null;
@@ -71,12 +74,14 @@ export default function Main() {
 	};
 
 	return (
-        <div className="flex justify-center flex-col items-center
-		.">
+        <div className="flex justify-center flex-col items-center">
 			<div>Dash Board</div>
 			<div>Welcome to the Attendance Management System</div>
 			<Calendar selectRange={true} onChange={onChange} value={value} />
 			<TotalEmployees />
+			<OnTimeToday />
+			<LateToday />
+			<OnTimePercentage />
             <div className="border border-gray rounded-lg p-4">
                 <button onClick={handleCheckIn} className="px-4 py-2 m-2 bg-slate-400 rounded">
                     Check In

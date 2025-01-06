@@ -1,6 +1,13 @@
-import { Entity, Column, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Entity, Column, BeforeInsert, BeforeUpdate, OneToMany} from 'typeorm';
+import type { Relation } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { BaseEntity } from './core/BaseEntity';
+import { AttendanceRecord } from './AttendanceRecord';
+
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
 
 @Entity()
 export class User extends BaseEntity{
@@ -19,10 +26,13 @@ export class User extends BaseEntity{
 
   @Column({
     type: 'simple-enum',
-    enum: ['USER', 'ADMIN'],
-    default: 'USER'
+    enum: UserRole,
+    default: UserRole.USER,
   })
-  role: 'USER' | 'ADMIN';
+  role: UserRole;
+
+  @OneToMany(() => AttendanceRecord, attendanceRecord => attendanceRecord.user)
+  attendanceRecords: Relation<AttendanceRecord[]>;
 
   @BeforeInsert()
   @BeforeUpdate()

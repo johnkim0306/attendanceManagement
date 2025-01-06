@@ -1,4 +1,4 @@
-import { IsNull, MoreThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, LessThan, Repository } from 'typeorm';
 import { AttendanceRecord } from '../db/entities/AttendanceRecord';
 import { User } from '../db/entities/User';
 import { Inject, InjectRepository, Service } from '../provider';
@@ -21,6 +21,15 @@ export class AttendanceRecordService {
     const newAttendanceRecord = new AttendanceRecord();
     newAttendanceRecord.checkIn = new Date();
     newAttendanceRecord.user = user;
+
+    // Set status based on check-in time
+    const checkInHour = newAttendanceRecord.checkIn.getHours();
+    if (checkInHour >= 10) {
+      newAttendanceRecord.status = 'late';
+    } else {
+      newAttendanceRecord.status = 'on-time';
+    }
+
     return this.AttendanceRecordRepository.save(newAttendanceRecord);
   }
 
@@ -32,22 +41,6 @@ export class AttendanceRecordService {
     }
     console.log("Inside UpdateCheckOut");
     console.log(user);
-
-    // Find the most recent attendance record for the user
-    // const recentAttendanceRecord = await this.AttendanceRecordRepository.findOne({
-    //   where: { 
-    //     id: userId,
-    //     checkOut: IsNull(),
-    //   },
-    //   order: { 
-    //     checkIn: 'DESC' 
-    //   },
-    // });
-
-    // const recentAttendanceRecord = await this.AttendanceRecordRepository.findOne({
-    //   where: { id: userId, checkOut: IsNull() },
-    //   order: { checkIn: 'DESC' },
-    // });    
 
     // Create a query builder
     const qb = this.AttendanceRecordRepository.createQueryBuilder('attendanceRecord');
@@ -84,10 +77,64 @@ export class AttendanceRecordService {
     return !!recentAttendanceRecord;
 }
 
+  async fetchRecordsByDateRange(userId: number, fromDate: Date, toDate: Date) {
+    if (fromDate > toDate) {
+      throw new Error('Invalid date range: fromDate cannot be after toDate.');
+    }
 
-  async fetchRecordsByDateRange(userId: number,fromDate: Date, toDate: Date) {
-    console.log("Inside attendanceRecord.service ", fromDate)
-    console.log("Inside attendanceRecord.service ", toDate)
-    return null;
+    const records = await this.AttendanceRecordRepository.find({
+      where: {
+        user: { id: userId },
+        checkIn: MoreThan(fromDate),
+        checkOut: LessThan(toDate),
+      },
+      order: { checkIn: 'ASC' },
+    });
+
+    if (records.length === 0) {
+      console.log(`No attendance records found for user ${userId} in the given date range.`);
+    }
+
+    return records.map(record => ({
+      ...record,
+      user: { id: record.user.id } // Convert user to a plain object
+    }));
   }
+
+  async getOnTimeToday(): Promise<number> {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return this.AttendanceRecordRepository.count({ where: { status: 'on-time', date: MoreThan(today) } });
+    } catch (error) {
+      console.error('Error in getOnTimeToday:', error);
+      throw error;
+    }
+  }
+
+  async getLateToday(): Promise<number> {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return this.AttendanceRecordRepository.count({ where: { status: 'late', date: MoreThan(today) } });
+    } catch (error) {
+      console.error('Error in getLateToday:', error);
+      throw error;
+    }
+  }
+
+  async getOnTimePercentage(): Promise<number> {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const total = await this.AttendanceRecordRepository.count({ where: { date: MoreThan(today) } });
+      if (total === 0) return 0;
+      const onTime = await this.AttendanceRecordRepository.count({ where: { status: 'on-time', date: MoreThan(today) } });
+      return (onTime / total) * 100;
+    } catch (error) {
+      console.error('Error in getOnTimePercentage:', error);
+      throw error;
+    }
+  }
+
 }

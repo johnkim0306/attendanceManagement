@@ -17,7 +17,15 @@ export class UserService {
     newUser.password = password;
     newUser.firstname = firstname;
     newUser.lastname = lastname;
-    return this.userRepository.save(newUser);
+    const savedUser = await this.userRepository.save(newUser);
+    const plainUser = JSON.parse(JSON.stringify(savedUser)); // Ensure it's a plain object
+    return {
+      id: plainUser.id,
+      email: plainUser.email,
+      firstname: plainUser.firstname,
+      lastname: plainUser.lastname,
+      role: plainUser.role,
+    };
   }
 
   async getTotalEmployees(): Promise<number> {
