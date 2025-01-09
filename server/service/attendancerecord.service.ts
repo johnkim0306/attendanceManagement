@@ -1,4 +1,4 @@
-import { IsNull, MoreThan, LessThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, LessThan, Repository, Between } from 'typeorm';
 import { AttendanceRecord } from '../db/entities/AttendanceRecord';
 import { User } from '../db/entities/User';
 import { Inject, InjectRepository, Service } from '../provider';
@@ -10,27 +10,73 @@ export class AttendanceRecordService {
   @InjectRepository(User) userRepository: Repository<User>;
   // @Inject(UserService) userService:UserService; // inject other service
 
+  async checkAttendanceRecordsForToday(date: Date): Promise<boolean> {
+    const count = await this.AttendanceRecordRepository.count({
+      where: { date },
+    });
+    return count > 0; // Returns true if records exist, false otherwise
+  }
+  
+  async preRecordAbsences() {
+    const users = await this.userRepository.find();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const absenceRecords = users.map(user => {
+      const record = new AttendanceRecord();
+      record.user = user;
+      record.date = today;
+      record.status = 'absent';
+      return record;
+    });
+
+    await this.AttendanceRecordRepository.save(absenceRecords);
+  }
+
   async create(userId: number) {
-    const user = await this.userRepository.findOneBy({id:userId});
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-    console.log("attendancerecord.service.ts inside!!");
-    console.log(user);
 
-    const newAttendanceRecord = new AttendanceRecord();
-    newAttendanceRecord.checkIn = new Date();
-    newAttendanceRecord.user = user;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // Set status based on check-in time
-    const checkInHour = newAttendanceRecord.checkIn.getHours();
-    if (checkInHour >= 10) {
-      newAttendanceRecord.status = 'late';
-    } else {
-      newAttendanceRecord.status = 'on-time';
+    const existingRecord = await this.AttendanceRecordRepository.findOne({
+      where: { user: { id: userId }, date: today },
+    });
+
+    if (!existingRecord) {
+      throw new Error(`No pre-recorded absence found for user with ID ${userId}`);
     }
 
-    return this.AttendanceRecordRepository.save(newAttendanceRecord);
+    if (existingRecord.checkIn) {
+      throw new Error(`User with ID ${userId} has already checked in today`);
+    }
+
+    existingRecord.checkIn = new Date();
+    const checkInHour = existingRecord.checkIn.getHours();
+    existingRecord.status = checkInHour >= 10 ? 'late' : 'on-time';
+
+    const savedRecord = await this.AttendanceRecordRepository.save(existingRecord);
+
+    // Convert the saved record to a plain object
+    const plainSavedRecord = {
+      ...savedRecord,
+      checkIn: savedRecord.checkIn.toISOString(),
+      checkOut: savedRecord.checkOut ? savedRecord.checkOut.toISOString() : null,
+      user: {
+        id: savedRecord.user.id,
+        email: savedRecord.user.email,
+        firstname: savedRecord.user.firstname,
+        lastname: savedRecord.user.lastname,
+        role: savedRecord.user.role,
+      },
+    };
+
+    console.log('Attendance record created:', plainSavedRecord);
+
+    return plainSavedRecord;
   }
 
   async checkOut(userId: number) {
@@ -59,7 +105,14 @@ export class AttendanceRecordService {
     }
     console.log("Swag");
     recentAttendanceRecord.checkOut = new Date();
-    return this.AttendanceRecordRepository.save(recentAttendanceRecord);
+    const savedRecord = await this.AttendanceRecordRepository.save(recentAttendanceRecord);
+
+    // Convert the saved record to a plain object
+    return {
+      ...savedRecord,
+      checkIn: savedRecord.checkIn.toISOString(),
+      checkOut: savedRecord.checkOut ? savedRecord.checkOut.toISOString() : null,
+    };
   }
 
   async hasCheckedInWithinThirtyMinutes(userId: number): Promise<boolean> {
@@ -105,7 +158,15 @@ export class AttendanceRecordService {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return this.AttendanceRecordRepository.count({ where: { status: 'on-time', date: MoreThan(today) } });
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      return this.AttendanceRecordRepository.count({
+        where: {
+          status: 'on-time',
+          date: Between(today, tomorrow),
+        },
+      });
     } catch (error) {
       console.error('Error in getOnTimeToday:', error);
       throw error;
@@ -116,25 +177,60 @@ export class AttendanceRecordService {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return this.AttendanceRecordRepository.count({ where: { status: 'late', date: MoreThan(today) } });
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      return this.AttendanceRecordRepository.count({
+        where: {
+          status: 'late',
+          date: Between(today, tomorrow),
+        },
+      });
     } catch (error) {
       console.error('Error in getLateToday:', error);
       throw error;
     }
   }
 
+  async getAbsentToday(): Promise<AttendanceRecord[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    return this.AttendanceRecordRepository.find({
+      where: {
+        date: Between(today, tomorrow),
+        status: 'absent',
+      },
+    });
+  }
+
   async getOnTimePercentage(): Promise<number> {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const total = await this.AttendanceRecordRepository.count({ where: { date: MoreThan(today) } });
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      const total = await this.AttendanceRecordRepository.count({
+        where: {
+          date: Between(today, tomorrow),
+        },
+      });
       if (total === 0) return 0;
-      const onTime = await this.AttendanceRecordRepository.count({ where: { status: 'on-time', date: MoreThan(today) } });
+
+      const onTime = await this.AttendanceRecordRepository.count({
+        where: {
+          status: 'on-time',
+          date: Between(today, tomorrow),
+        },
+      });
+
       return (onTime / total) * 100;
     } catch (error) {
       console.error('Error in getOnTimePercentage:', error);
       throw error;
     }
   }
-
 }

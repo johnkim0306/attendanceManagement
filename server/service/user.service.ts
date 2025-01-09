@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { User } from '../db/entities/User';
+import { User, UserRole } from '../db/entities/User';
 import { Inject, InjectRepository, Service } from '../provider';
 
 @Service
@@ -11,20 +11,23 @@ export class UserService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async signUpUser(email:string, password:string, firstname:string, lastname:string) {
-    let newUser = new User();
-    newUser.email = email;
-    newUser.password = password;
-    newUser.firstname = firstname;
-    newUser.lastname = lastname;
-    const savedUser = await this.userRepository.save(newUser);
-    const plainUser = JSON.parse(JSON.stringify(savedUser)); // Ensure it's a plain object
+  async createUser(data: { email: string; password: string; firstName: string; lastName: string }) {
+    const user = new User();
+    user.email = data.email;
+    user.password = data.password;
+    user.firstname = data.firstName;
+    user.lastname = data.lastName;
+    user.role = UserRole.USER;
+
+    const savedUser = await this.userRepository.save(user);
+
+    // Convert the saved user to a plain object
     return {
-      id: plainUser.id,
-      email: plainUser.email,
-      firstname: plainUser.firstname,
-      lastname: plainUser.lastname,
-      role: plainUser.role,
+      id: savedUser.id,
+      email: savedUser.email,
+      firstname: savedUser.firstname,
+      lastname: savedUser.lastname,
+      role: savedUser.role,
     };
   }
 

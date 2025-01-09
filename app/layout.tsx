@@ -4,6 +4,7 @@ import './globals.css';
 import 'reflect-metadata';
 import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
+import { initializeCronJob } from '@/server/scheduler';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
 	title: 'Vita Commute Control',
 	description: 'Manage attendence on Vitashop',
 };
+
+initializeCronJob();
 
 export default async function RootLayout({
 	children,
@@ -25,3 +28,4 @@ export default async function RootLayout({
 		</html>
 	);
 }
+
