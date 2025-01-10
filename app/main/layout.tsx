@@ -1,6 +1,6 @@
 import AuthProvider from '@/components/authProvider';
 import Navbar from '@/components/navbar';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/Sidebar/sidebar';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 export default async function MainLayout({

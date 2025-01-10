@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react'
-import Sidebar from '@/components/sidebar'
+import Sidebar from '@/components/Sidebar/sidebar'
 import { describe } from 'node:test';
 import { useSession } from 'next-auth/react';
 
