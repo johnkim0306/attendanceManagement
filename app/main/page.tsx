@@ -12,6 +12,7 @@ import LateToday from '@/components/LateToday';
 import OnTimePercentage from '@/components/OnTimePercentage';
 import CheckInOutTable from "@/components/CheckInOutTable";
 import AbsentToday from '@/components/AbsentToday';
+import DeviceCategoryChart from "@/components/DeviceCategoryChart ";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -84,6 +85,7 @@ export default function Main() {
 
       {/* Calendar Component */}
       <div className="w-full max-w-md">
+        <DeviceCategoryChart />
         <Calendar selectRange={true} onChange={onChange} value={value} />
       </div>
 
