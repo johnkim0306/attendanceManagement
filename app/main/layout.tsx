@@ -3,6 +3,8 @@ import Navbar from '@/components/navbar';
 import Sidebar from '@/components/Sidebar/sidebar';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+import "@/css/style.css";
+
 export default async function MainLayout({
 	children,
 }: Readonly<{

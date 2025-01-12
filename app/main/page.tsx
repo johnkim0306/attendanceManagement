@@ -13,6 +13,7 @@ import OnTimePercentage from '@/components/OnTimePercentage';
 import CheckInOutTable from "@/components/CheckInOutTable";
 import AbsentToday from '@/components/AbsentToday';
 import DeviceCategoryChart from "@/components/DeviceCategoryChart ";
+import MapOne from "@/components/Maps/MapOne";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -87,6 +88,7 @@ export default function Main() {
       <div className="w-full max-w-md">
         <DeviceCategoryChart />
         <Calendar selectRange={true} onChange={onChange} value={value} />
+        <MapOne/>
       </div>
 
       {/* Check-In / Check-Out Section */}
