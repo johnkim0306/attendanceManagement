@@ -52,8 +52,10 @@ const MapOne: React.FC = () => {
           line.from[0] !== 0 && line.to[0] !== 0 // Filter out invalid lines
       );
 
+    const selectedRegions = top10Countries.map((item) => getCountryCode(item.country));
+
     const mapOne = new jsVectorMap({
-      selectedRegions: ['EG', 'US'],
+      selectedRegions: selectedRegions,
       selector: "#mapOne",
       map: "world_merc",
       zoomButtons: true,
@@ -126,6 +128,23 @@ const MapOne: React.FC = () => {
       China: [35.8617, 104.1954],
     };
     return coordinates[country] || [0, 0]; // Default to [0, 0] if not found
+  };
+
+  // Function to get region code for a country
+  const getCountryCode = (country: string) => {
+    const countryCodes: Record<string, string> = {
+      Canada: "CA",
+      "United States": "US",
+      "South Korea": "KR",
+      "Hong Kong": "HK",
+      Brazil: "BR",
+      Singapore: "SG",
+      India: "IN",
+      Mexico: "MX",
+      Netherlands: "NL",
+      China: "CN",
+    };
+    return countryCodes[country] || ""; // Default to empty string if not found
   };
 
   return (
