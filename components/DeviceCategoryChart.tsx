@@ -19,6 +19,7 @@ const DeviceCategoryChart = () => {
         const response = await fetch(`/api/deviceCategory?timeRange=${timeRange}`);
         const data = await response.json();
         setChartData(data);
+        console.log("Fetched data:", data);
 
         // Calculate total sessions for percentage computation
         const total = data.reduce((acc: number, item: { sessions: number }) => acc + item.sessions, 0);

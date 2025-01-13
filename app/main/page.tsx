@@ -12,7 +12,7 @@ import LateToday from '@/components/LateToday';
 import OnTimePercentage from '@/components/OnTimePercentage';
 import CheckInOutTable from "@/components/CheckInOutTable";
 import AbsentToday from '@/components/AbsentToday';
-import DeviceCategoryChart from "@/components/DeviceCategoryChart ";
+import DeviceCategoryChart from "@/components/DeviceCategoryChart";
 import MapOne from "@/components/Maps/MapOne";
 
 type ValuePiece = Date | null;
@@ -85,11 +85,16 @@ export default function Main() {
       </div>
 
       {/* Calendar Component */}
-      <div className="w-full max-w-md">
-        <DeviceCategoryChart />
-        <Calendar selectRange={true} onChange={onChange} value={value} />
-        <MapOne/>
+      <div className="w-full flex flex-wrap md:flex-nowrap space-y-4 md:space-y-0 md:space-x-4">
+        <div className="w-full md:w-1/2 bg-gray-200 p-4">
+          <DeviceCategoryChart />
+        </div>
+        <div className="w-full md:w-1/2 bg-gray-200 p-4">
+          <MapOne/>
+        </div>
       </div>
+
+      <Calendar selectRange={true} onChange={onChange} value={value} />
 
       {/* Check-In / Check-Out Section */}
       <div className="border border-gray-300 rounded-lg p-6 w-full max-w-md bg-white shadow-lg">
