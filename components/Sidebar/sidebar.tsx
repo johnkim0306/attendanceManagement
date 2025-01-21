@@ -42,7 +42,7 @@ const menuGroups = [
         ),
         label: "Dashboard",
         route: "#",
-        children: [{ label: "eCommerce", route: "/" }],
+        children: [{ label: "eCommerce", route: "/eCommerce" }],
       },
       {
         icon: (
@@ -365,7 +365,7 @@ export default function Sidebar() {
       </div>
       {/* SIDEBAR HEADER */}
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+      <div className="no-scrollbar flex flex-col duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
           <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
